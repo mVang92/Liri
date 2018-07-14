@@ -1,12 +1,11 @@
 require("dotenv").config();
 var OMDBrequest = require("request");
 var read = require("fs");
+var keys = require("./keys");
+var Twitter = require("twitter");
+var Spotify = require("node-spotify-api");
 
-// var Twitter = require("twitter");
-// var keys = require("keys.js");
-// var spotify = new Spotify(keys.spotify);
-// var client = new Twitter(keys.twitter);
-
+// Command takes in user input
 var command = process.argv[2];
 // Allows the user to input movies that have more than one word
 var args = process.argv.slice(3).join("+");
@@ -14,34 +13,35 @@ var args = process.argv.slice(3).join("+");
 // Pass in the command and arguments into the running function
 running(command, args);
 
-function running(com, arg) {
-    // console.log("running")
-    switch (command) {
-        case "my-tweets":
-            tweets();
-            break;
-        case "spotify-this-song":
-            spotify();
-            break;
-        case "movie-this":
-            // If the user enters no value for movies, default to Mr Nobody
-            if (args === "") {
-                var defaultMovie = "Mr Nobody";
-                movie(defaultMovie);
-                return;
-            }
-            movie(args);
-            break;
-        case "do-what-it-says":
-            doSays();
-            break;
-    };
+function running(cmd, arg) {
+    if (!cmd) {
+        console.log("Invalid Input\nUse: movie-this (movie), spotify-this-song (song), my-tweets, or do-what-it-says");
+    } else {
+        switch (cmd) {
+            case "my-tweets":
+                tweets(args);
+                break;
+            case "spotify-this-song":
+                spotify(args);
+                break;
+            case "movie-this":
+                // If the user enters no value for movies, default to Mr Nobody
+                if (arg === "") {
+                    var defaultMovie = "Mr Nobody";
+                    movie(defaultMovie);
+                    return;
+                }
+                movie(args);
+                break;
+            case "do-what-it-says":
+                doSays();
+                break;
+        };
+    }
 }
 
 function movie(movieName) {
-    // console.log("movie")
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-
     OMDBrequest(queryUrl, function (err, response, data) {
         if (!err && response.statusCode === 200) {
             let obj = JSON.parse(data)
@@ -54,21 +54,39 @@ function movie(movieName) {
             console.log("Language: " + obj.Language);
             console.log("Movie Plot: " + obj.Plot);
             console.log("Main Actors: " + obj.Actors);
+        } else {
+            return console.log("Error");
         }
     })
+}
+
+function tweets() {
+    console.log("tweet");
+}
+
+function spotify(song) {
+    var spotify = new Spotify(keys.spotify);
+    spotify.search({ type: 'track', query: song }, function (err, data) {
+        result = data.tracks.items[0];
+        if (!err) {
+            console.log("");
+            console.log("Artist: " + result.album.artists[0].name);
+            console.log("Song name: " + result.name);
+            console.log("Album: " + result.album.name);
+            console.log("Link: " + result.external_urls.spotify);
+        } else {
+            return console.log('Error occurred: ' + err);
+        }
+    });
 }
 
 function doSays() {
     read.readFile("random.txt", "UTF8", function (err, data) {
         if (err) {
-            console.log(err);
+            return console.log(err);
         }
-        // Split, separates text by what ever is inside the quotes
-        // This will split the elements in the file by commas
-        var split = data.split(",");
-        // Just to make it look better in the terminal
-        for (var i = 0; i < split.length; i++) {
-            console.log(split[i]);
-        }
+        var file = data.split(",");
+        console.log(file);
+        running(file[0], file[1]);
     })
 }

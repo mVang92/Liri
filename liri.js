@@ -19,9 +19,14 @@ function running(cmd, arg) {
     } else {
         switch (cmd) {
             case "my-tweets":
-                tweets(args);
+                tweets();
                 break;
             case "spotify-this-song":
+                if (arg === "") {
+                    var defaultSong = "Ace of Base: The Sign";
+                    spotify(defaultSong);
+                    return;
+                }
                 spotify(args);
                 break;
             case "movie-this":
@@ -61,7 +66,19 @@ function movie(movieName) {
 }
 
 function tweets() {
-    console.log("tweet");
+    var client = new Twitter(keys.twitter);
+    client.get("statuses/home_timeline", function (error, tweets, response) {
+        if (!error) {
+            tweets.forEach(tweet => {
+                console.log("User Name: " + tweet.user.name);
+                console.log("Tweet Time: " + tweet.created_at);
+                console.log("Tweet Content: " + tweet.text);
+                console.log("-------------------------------");
+            });
+        } else {
+            console.log("No Tweets to Show")
+        }
+    });
 }
 
 function spotify(song) {
@@ -81,12 +98,11 @@ function spotify(song) {
 }
 
 function doSays() {
-    read.readFile("random.txt", "UTF8", function (err, data) {
+    read.readFile("./random.txt", "UTF8", function (err, data) {
         if (err) {
             return console.log(err);
         }
         var file = data.split(",");
-        console.log(file);
         running(file[0], file[1]);
-    })
+    });
 }

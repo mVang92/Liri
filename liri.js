@@ -22,12 +22,14 @@ function running(cmd, arg) {
                 tweets();
                 break;
             case "spotify-this-song":
+            console.log("spotify")
+            console.log(arg)
                 if (arg === "") {
                     var defaultSong = "Ace of Base: The Sign";
                     spotify(defaultSong);
                     return;
                 }
-                spotify(args);
+                spotify(arg);
                 break;
             case "movie-this":
                 // If the user enters no value for movies, default to Mr Nobody
@@ -36,7 +38,7 @@ function running(cmd, arg) {
                     movie(defaultMovie);
                     return;
                 }
-                movie(args);
+                movie(arg);
                 break;
             case "do-what-it-says":
                 doSays();

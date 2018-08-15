@@ -16,13 +16,17 @@ LIRI is a Language Interpretation and Recognition Interface. LIRI will be a comm
 // Spotify API keys
 
 SPOTIFY_ID="your spotify id"
+
 SPOTIFY_SECRET="your spotify secret"
 
 // Twitter API keys
 
 TWITTER_CONSUMER_KEY="your twitter consumer key"
+
 TWITTER_CONSUMER_SECRET="your twitter consumer secret"
+
 TWITTER_ACCESS_TOKEN_KEY="your twitter access token key"
+
 TWITTER_ACCESS_TOKEN_SECRET="your twitter access token secret"
 
 8. Assuming you have a Twitter account, log into your account and follow this link (https://apps.twitter.com/) to create a new Twitter app where you can generate a consumer and secret key.
